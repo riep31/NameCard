@@ -178,13 +178,13 @@
       
       <div class="info">
         <div class="info-row">
-          <div class="nama" id="nama-karyawan">Budi Haryanto</div>
+          <div class="nama" id="nama-karyawan"></div>
         </div>
         <div class="info-row">
-          <div class="kode" id="id-name">F0057.0715_Budi Haryanto</div>
+          <div class="kode" id="id-name"></div>
         </div>
         <div class="info-row">
-          <div class="jabatan" id="jabatan">Operator Gudang</div>
+          <div class="jabatan" id="jabatan"></div>
         </div>
       </div>
     </div>
@@ -195,19 +195,28 @@
   </div>
 
   <script>
-    // Ambil nilai ID Name dari kolom AppSheet [ID Name]
-    const idName = document.getElementById('id-name').textContent;
+    // Ambil parameter dari URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const namaKaryawan = urlParams.get('nama') || '';
+    const idName = urlParams.get('id') || '';
+    const jabatan = urlParams.get('jabatan') || '';
     
-    // Generate QR Code hanya dengan nilai ID Name
-    // Contoh: "F0057.0715_Budi Haryanto"
-    new QRCode(document.getElementById("qrcode"), {
-      text: idName,
-      width: 140,
-      height: 140,
-      colorDark: "#000000",
-      colorLight: "#ffffff",
-      correctLevel: QRCode.CorrectLevel.M
-    });
+    // Isi data ke elemen HTML
+    document.getElementById('nama-karyawan').textContent = namaKaryawan;
+    document.getElementById('id-name').textContent = idName;
+    document.getElementById('jabatan').textContent = jabatan;
+    
+    // Generate QR Code hanya jika ID Name ada
+    if (idName) {
+      new QRCode(document.getElementById("qrcode"), {
+        text: idName,
+        width: 140,
+        height: 140,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    }
   </script>
 </body>
 </html>
