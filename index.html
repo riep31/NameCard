@@ -35,7 +35,7 @@
       height: 287px;
       background: white;
       border: 2px solid black;
-      padding: 11px 14px;
+      padding: 5px 6px;
       display: flex;
       flex-direction: column;
       gap: 5px;
@@ -46,7 +46,7 @@
       height: 160px;
       background: white;
       border: 2px solid black;
-      border-radius: 10px;
+      border-radius: 8px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -80,6 +80,7 @@
       flex: 1;
       background: white;
       border: 2px solid black;
+      border-radius: 8px;
       padding: 5px;
       display: flex;
       flex-direction: column;
@@ -106,6 +107,7 @@
 
     .kode {
       font-size: 8px;
+      text-align: center;
       padding: 2px 0;
       word-break: break-all;
     }
@@ -138,6 +140,10 @@
     .print-button:active {
       transform: translateY(0);
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .print-button:hover[style*="background: #28a745"] {
+      background: #218838 !important;
     }
 
     /* Print Styles */
@@ -192,8 +198,13 @@
     <button class="print-button" onclick="window.print()">
       🖨️ Cetak Kartu
     </button>
+    
+    <button class="print-button" onclick="saveAsImage()" style="background: #28a745;">
+      💾 Simpan sebagai PNG
+    </button>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
     // Ambil parameter dari URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -215,6 +226,43 @@
         colorDark: "#000000",
         colorLight: "#ffffff",
         correctLevel: QRCode.CorrectLevel.M
+      });
+    }
+
+    // Fungsi untuk menyimpan sebagai PNG
+    function saveAsImage() {
+      const box = document.querySelector('.box');
+      
+      // Konversi mm ke pixel (300 DPI untuk kualitas cetak)
+      // 1 mm = 11.811 pixels at 300 DPI
+      const mmToPx = 11.811;
+      const width = 55 * mmToPx;  // 55mm
+      const height = 85 * mmToPx; // 85mm
+      
+      html2canvas(box, {
+        scale: 3,
+        backgroundColor: '#ffffff',
+        width: box.offsetWidth,
+        height: box.offsetHeight
+      }).then(canvas => {
+        // Buat canvas baru dengan ukuran yang diinginkan
+        const finalCanvas = document.createElement('canvas');
+        finalCanvas.width = width;
+        finalCanvas.height = height;
+        const ctx = finalCanvas.getContext('2d');
+        
+        // Gambar dengan background putih
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, width, height);
+        
+        // Gambar kartu di tengah
+        ctx.drawImage(canvas, 0, 0, width, height);
+        
+        // Download
+        const link = document.createElement('a');
+        link.download = `kartu-${idName || 'karyawan'}.png`;
+        link.href = finalCanvas.toDataURL('image/png');
+        link.click();
       });
     }
   </script>
